@@ -24,9 +24,9 @@ Device     Boot   Start        End    Sectors   Size Id Type
 - create host, Debian9/PVE5.2
 
 - Precedure
-  - 1, mount synoboot_Junboot_v1.03b_ds3617_6.2.img file and copy junboot file into new directory ${HOST temp dir}/boot for DSM
-	- 2, create /boot/grub/i386-pc and copy host /usr/lib/grub/i386-pc/* into it.
-	- 3, copy grub.cfg grubenv into /boot/grub
+ - 1, mount synoboot_Junboot_v1.03b_ds3617_6.2.img file and copy junboot file into new directory ${HOST temp dir}/boot for DSM
+ - 2, create /boot/grub/i386-pc and copy host /usr/lib/grub/i386-pc/* into it.
+ - 3, copy grub.cfg grubenv into /boot/grub
 ```
 --------------------------------------------------------------------------------------------------
 root@pvedsm1 ➜  boot ls bzImage extra.lzma info.txt rd.gz zImage
