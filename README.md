@@ -1,60 +1,66 @@
 # synoboot-grub2-unusb-disk
 Create grub2 bootloader to load synoboot in un-usb disk, HDD or SSD
-
-Here is the reproduce procedure.
+## raw script to half-automatic install
+Must run in linux with grub-pc installed
+copy the synoboot.img into the synoboot-grub2-unusb-disk 
+replace the /dev/sda with your DSM disk
+```
+$ git clone https://github.com/laris/synoboot-grub2-unusb-disk
+$ cd synoboot-grub2-unusb-disk
+$ ./create-md0-boot-dir.sh
+scp -r ./boot user@DSM-IP:/tmp/
+ssh to DSM and sudo su - to change to root and
+root# mv /tmp/boot /
+root# dd if=/boot/grub/i386-pc/boot.img of=/dev/sda bs=446 count=1
+root# dd if=/boot/grub/i386-pc/core.img of=/dev/sda bs=512 seek=1
+```
+## Here is the reproduce procedure.
  - Environment, Intel Atom D2550 MB with 2 x 3.5" HDDs for RAID0, 2G RAM, 2xGbE NICs, successfully to install DSM6.2 using junboot 1.03b
  - Partition table list
-```
---------------------------------------------------------------------------------------------------
-root@DSM2550:~# fdisk -l /dev/sda (sdb have same partition table)
-Disk /dev/sda: 931.5 GiB, 1000204886016 bytes, 1953525168 sectors
-Units: sectors of 1 * 512 = 512 bytes
-Sector size (logical/physical): 512 bytes / 512 bytes
-I/O size (minimum/optimal): 512 bytes / 512 bytes
-Disklabel type: dos
-Disk identifier: 0x00077232
+      ```
+      root@DSM2550:~# fdisk -l /dev/sda (sdb have same partition table)
+      Disk /dev/sda: 931.5 GiB, 1000204886016 bytes, 1953525168 sectors
+      Units: sectors of 1 * 512 = 512 bytes
+      Sector size (logical/physical): 512 bytes / 512 bytes
+      I/O size (minimum/optimal): 512 bytes / 512 bytes
+      Disklabel type: dos
+      Disk identifier: 0x00077232
 
-Device     Boot   Start        End    Sectors   Size Id Type
-/dev/sda1          2048    4982527    4980480   2.4G fd Linux raid autodetect
-/dev/sda2       4982528    9176831    4194304     2G fd Linux raid autodetect
-/dev/sda3       9437184 1953320351 1943883168 926.9G fd Linux raid autodetect
---------------------------------------------------------------------------------------------------
-```
+      Device     Boot   Start        End    Sectors   Size Id Type
+      /dev/sda1          2048    4982527    4980480   2.4G fd Linux raid autodetect
+      /dev/sda2       4982528    9176831    4194304     2G fd Linux raid autodetect
+      /dev/sda3       9437184 1953320351 1943883168 926.9G fd Linux raid autodetect
+      ```
 - DEBUG console, i attached one TTY serial converter on ttyS1 to monitor boot log
 - create host, Debian9/PVE5.2
 
 - Precedure
- - 1, mount synoboot_Junboot_v1.03b_ds3617_6.2.img file and copy junboot file into new directory ${HOST temp dir}/boot for DSM
- - 2, create /boot/grub/i386-pc and copy host /usr/lib/grub/i386-pc/* into it.
- - 3, copy grub.cfg grubenv into /boot/grub
-```
---------------------------------------------------------------------------------------------------
-root@pvedsm1 ➜  boot ls bzImage extra.lzma info.txt rd.gz zImage
-bzImage  extra.lzma  info.txt  rd.gz  zImage
-root@pvedsm1 ➜  boot ls grub
-grub.cfg  grubenv  i386-pc
---------------------------------------------------------------------------------------------------
-```
+- 1, mount synoboot_Junboot_v1.03b_ds3617_6.2.img file and copy junboot file into new directory ${HOST temp dir}/boot for DSM
+- 2, create /boot/grub/i386-pc and copy host /usr/lib/grub/i386-pc/* into it.
+- 3, copy grub.cfg grubenv into /boot/grub
+  ```
+  root@pvedsm1 ➜  boot ls bzImage extra.lzma info.txt rd.gz zImage
+  bzImage  extra.lzma  info.txt  rd.gz  zImage
+  root@pvedsm1 ➜  boot ls grub
+  grub.cfg  grubenv  i386-pc
+  ```
 - 4, create core.img, I add mdraid09_be so the grub can load the DSM raid1 /dev/md0 in /boot
-```
-grub-mkimage -v -C xz -O i386-pc -o ./boot/grub/i386-pc/core.img -p "(hd0,msdos1)/boot/grub" -d ./boot/grub/i386-pc biosdisk part_msdos mdraid09_be ext2
-```
+  ```
+  grub-mkimage -v -C xz -O i386-pc -o ./boot/grub/i386-pc/core.img -p "(hd0,msdos1)/boot/grub" -d ./boot/grub/i386-pc biosdisk part_msdos mdraid09_be ext2
 - 5, cp the ${HOST temp dir}/boot into DSM /boot
 - 6, dd the boot.img and core.img into MBR and 2nd sector of /dev/sda
-```--------------------------------------------------------------------------------------------------
-root@DSM2550:/boot# dd if=grub/i386-pc/boot.img of=/dev/sda bs=446 count=1
-1+0 records in
-1+0 records out
-446 bytes (446 B) copied, 0.000316455 s, 1.4 MB/s
-root@DSM2550:/boot# dd if=grub/i386-pc/core.img of=/dev/sda bs=512 seek=1
-60+1 records in
-60+1 records out
-30906 bytes (31 kB) copied, 0.0116049 s, 2.7 MB/s
---------------------------------------------------------------------------------------------------
-```
+   ```
+   root@DSM2550:/boot# dd if=grub/i386-pc/boot.img of=/dev/sda bs=446 count=1
+   1+0 records in
+   1+0 records out
+   446 bytes (446 B) copied, 0.000316455 s, 1.4 MB/s
+   root@DSM2550:/boot# dd if=grub/i386-pc/core.img of=/dev/sda bs=512 seek=1
+   60+1 records in
+   60+1 records out
+   30906 bytes (31 kB) copied, 0.0116049 s, 2.7 MB/s
+   ```
 - 7, then reboot and remove usb disk, the bootloader can work but then got "mount failed" error and vga screen stuck in info.txt
 ```
---------------------------------------------------------------------------------------------------
                           GNU GRUB  version 2.02-pve6
 
  +----------------------------------------------------------------------------+
@@ -77,7 +83,6 @@ root@DSM2550:/boot# dd if=grub/i386-pc/core.img of=/dev/sda bs=512 seek=1
       before booting or `c' for a command-line.
 
 mount failed
---------------------------------------------------------------------------------------------------
 ```
 I also searched the xpenology forum but rare discussion about mount failed error, especially it will show in PVE/proxmox environment  when DSM as VM, but work when loader as sata disk.
 https://xpenology.com/forum/topic/12952-dsm-62-loader/?page=5&tab=comments#comment-93988
