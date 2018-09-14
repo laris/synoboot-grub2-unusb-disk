@@ -130,5 +130,5 @@ Updating /tmpRoot//usr/lib/modules/update/virtio_net.ko...
 ```
 https://xpenology.com/forum/topic/7884-xpenology-runing-on-docker/?do=findComment&comment=95342
 
-Also research about the DDSM in this post, could you share your comments?
+Also research about the DDSM in this post
 https://xpenology.com/forum/topic/13110-does-migrating-ddsm-to-linux-dockerlxc-make-sense/?do=findComment&comment=95486
