@@ -1,7 +1,7 @@
 # synoboot-grub2-unusb-disk
 Create grub2 bootloader to load synoboot in un-usb disk, HDD or SSD
 
-# Warning, still have issue, but work with usbboot then reboot withou usboot
+# Warning, still have issue, but work with usbboot then reboot withou usboot, guess the kernel have hardcode to read rd.gz file
 
 ## raw script to half-automatic install
 Must run in linux with grub-pc installed    
