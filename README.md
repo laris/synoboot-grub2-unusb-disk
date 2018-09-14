@@ -1,9 +1,9 @@
 # synoboot-grub2-unusb-disk
 Create grub2 bootloader to load synoboot in un-usb disk, HDD or SSD
 ## raw script to half-automatic install
-Must run in linux with grub-pc installed
+Must run in linux with grub-pc installed 
 copy the synoboot.img into the synoboot-grub2-unusb-disk 
-replace the /dev/sda with your DSM disk
+replace the /dev/sda with your DSM disk 
 ```
 $ git clone https://github.com/laris/synoboot-grub2-unusb-disk
 $ cd synoboot-grub2-unusb-disk
