@@ -132,3 +132,8 @@ https://xpenology.com/forum/topic/7884-xpenology-runing-on-docker/?do=findCommen
 
 Also research about the DDSM in this post
 https://xpenology.com/forum/topic/13110-does-migrating-ddsm-to-linux-dockerlxc-make-sense/?do=findComment&comment=95486
+
+
+REF:
+http://www.dolda2000.com/~fredrik/doc/grub2
+https://pete.akeo.ie/2014/05/compiling-and-installing-grub2-for.html
